@@ -71,6 +71,49 @@ export default async function handler(req, res) {
   }
 }
 
+function buildPrompt(ticker) {
+  return `Research ${ticker} stock RIGHT NOW. Use web search. Return ONLY this JSON, no other text:
+{"ticker":"${ticker}","name":"","sector":"","exchange":"","description":"1-2 sentences about company","price":{"current":0,"prev_close":0,"week52_high":0,"week52_low":0,"market_cap":"","volume":""},"technicals":{"sma50":0,"sma200":0,"sma50_signal":"above/below","sma200_signal":"above/below","rsi":0,"rsi_signal":"neutral/overbought/oversold","trend":"uptrend/downtrend/sideways","support":0,"resistance":0},"valuation":{"pe_trailing":0,"pe_forward":0,"dividend_yield":"0%","beta":0},"earnings":{"latest_quarter":"","gaap_eps":0,"non_gaap_eps":0,"gap_reason":"brief reason","revenue":"","revenue_growth":"","gross_margin":"","next_earnings_date":""},"analyst":{"consensus":"","num_analysts":0,"target_high":0,"target_median":0,"target_low":0,"implied_upside":"","recent_actions":["action1","action2"]},"news":[{"headline":"","sentiment":"bullish/bearish/neutral","date":"","impact":"high/medium/low"},{"headline":"","sentiment":"bullish/bearish/neutral","date":"","impact":"high/medium/low"},{"headline":"","sentiment":"bullish/bearish/neutral","date":"","impact":"high/medium/low"}],"investments":["move1","move2"],"risks":["risk1","risk2"],"catalysts":["catalyst1","catalyst2"],"assessment":{"signal":"BUY/HOLD/WATCH/SELL","conviction":"high/medium/low","suggested_buy_zone":0,"suggested_sell_zone":0,"summary":"2 sentence assessment"}}`;
+}
+
+If this is an ETF adapt accordingly. Return ONLY the JSON, nothing else.`;
+}      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      return res.status(response.status).json({ error: err });
+    }
+
+    const data = await response.json();
+
+    // Extract text from content blocks
+    let text = '';
+    if (data.content) {
+      for (const block of data.content) {
+        if (block.type === 'text') text += block.text;
+      }
+    }
+
+    // Parse JSON from response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return res.status(500).json({ error: 'Could not parse AI response' });
+
+    const parsed = JSON.parse(jsonMatch[0]);
+    return res.status(200).json(parsed);
+
+  } catch (err) {
+    console.error('Research error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+}
+
 function buildPrompt(ticker, mode) {
   return `You are a professional stock analyst terminal. Research ${ticker} comprehensively as of today. Use your web search tool to find the most current data. Return ONLY a JSON object with no other text:
 
