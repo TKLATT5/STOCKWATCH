@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMW Tire Selector</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #1C69D4;
+    --blue-dark: #0f4a9e;
+    --blue-light: #e8f0fe;
+    --gold: #FFD700;
+    --bg: #f4f5f7;
+    --card-bg: #ffffff;
+    --text: #111111;
+    --text-muted: #555555;
+    --border: #d8dde6;
+    --offroad: #8B6914;
+    --adventure: #3A7D44;
+    --street: #1C69D4;
+    --track: #8B1C4A;
+  }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: #0a1628;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--blue);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bmw-roundel {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .header-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .header-right {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.06em;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* SPECTRUM */
+  .spectrum-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .spectrum-track {
+    display: flex;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .seg { flex: 1; }
+  .s1 { background: #9E5C00; }
+  .s2 { background: #7A7A00; }
+  .s3 { background: #2E8B2E; }
+  .s4 { background: #1C7A8C; }
+  .s5 { background: #1C69D4; }
+  .s6 { background: #5C2E8C; }
+  .s7 { background: #8C1C3A; }
+
+  input[type=range] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    margin-top: -8px;
+  }
+  input[type=range]:focus { outline: none; }
+
+  .spectrum-value {
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* FILTERS */
+  .filters-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .filter-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  select:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+
+  /* RESULTS */
+  .results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .results-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .results-count span {
+    color: var(--blue);
+    font-size: 18px;
+  }
+
+  /* TIRE GRID */
+  .tire-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .tire-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .tire-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 2px 12px rgba(28,105,212,0.12);
+  }
+
+  .tire-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .tire-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .tire-spectrum-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tire-spectrum-fill {
+    position: absolute;
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .tire-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-model { background: var(--blue-light); color: var(--blue-dark); }
+  .badge-wet { background: #e0f0ff; color: #0a4a80; }
+  .badge-dry { background: #fff3c0; color: #5a3e00; }
+  .badge-allweather { background: #e1f5ee; color: #0f6e56; }
+
+  .tire-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 700px) {
+    .filters-section { grid-template-columns: 1fr; }
+    .spectrum-labels { font-size: 10px; }
+    header { padding: 0 1rem; }
+    .header-right { display: none; }
+    main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <svg class="bmw-roundel" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" fill="none" stroke="white" stroke-width="3"/>
+      <circle cx="50" cy="50" r="36" fill="none" stroke="white" stroke-width="1"/>
+      <path d="M50 14 A36 36 0 0 1 86 50 L50 50 Z" fill="white"/>
+      <path d="M50 86 A36 36 0 0 1 14 50 L50 50 Z" fill="white"/>
+      <path d="M14 50 A36 36 0 0 1 50 14 L50 50 Z" fill="#1C69D4"/>
+      <path d="M86 50 A36 36 0 0 1 50 86 L50 50 Z" fill="#1C69D4"/>
+    </svg>
+    <div>
+      <div class="header-title">BMW Tire Selector</div>
+      <div class="header-sub">Motorrad Parts &amp; Accessories</div>
+    </div>
+  </div>
+  <div class="header-right">Internal Sales Tool</div>
+</header>
+
+<main>
+
+  <div class="spectrum-section">
+    <div class="section-label">Riding style spectrum</div>
+    <div class="spectrum-labels">
+      <span>Full off-road</span>
+      <span>Adventure</span>
+      <span>Street / Touring</span>
+      <span>Track</span>
+    </div>
+    <div class="spectrum-track">
+      <div class="seg s1"></div>
+      <div class="seg s2"></div>
+      <div class="seg s3"></div>
+      <div class="seg s4"></div>
+      <div class="seg s5"></div>
+      <div class="seg s6"></div>
+      <div class="seg s7"></div>
+    </div>
+    <input type="range" min="1" max="7" value="4" step="1" id="spectrum" />
+    <div class="spectrum-value" id="spectrum-label">Adventure / Street</div>
+  </div>
+
+  <div class="filters-section">
+    <div class="filter-card">
+      <label class="filter-label" for="bikeType">BMW model family</label>
+      <select id="bikeType">
+        <option value="all">All BMW models</option>
+        <optgroup label="Adventure / GS">
+          <option value="gs_big">R 1300 GS / R 1250 GS / R 1200 GS</option>
+          <option value="gs_small">F 900 GS / F 850 GS / F 750 GS</option>
+          <option value="gs_adv">GS Adventure (all)</option>
+          <option value="g310gs">G 310 GS</option>
+        </optgroup>
+        <optgroup label="Street / Naked">
+          <option value="r_series">R 1250 R / R 1250 RS</option>
+          <option value="s_series">S 1000 R / S 1000 RR / S 1000 XR</option>
+          <option value="f_street">F 900 R / F 900 XR</option>
+          <option value="g310r">G 310 R</option>
+        </optgroup>
+        <optgroup label="Tourer">
+          <option value="rt">R 1250 RT / K 1600 GT / K 1600 GTL</option>
+          <option value="r18">R 18 / R 18 Classic</option>
+        </optgroup>
+        <optgroup label="Scooter">
+          <option value="ce04">CE 04 (electric)</option>
+          <option value="c400">C 400 X / C 400 GT</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="filter-card">
+      <label class="filter-label" for="brand">Brand</label>
+      <select id="brand">
+        <option value="all">All brands</option>
+        <option value="Michelin">Michelin</option>
+        <option value="Dunlop">Dunlop</option>
+        <option value="Metzeler">Metzeler</option>
+        <option value="Mitas">Mitas</option>
+        <option value="Pirelli">Pirelli</option>
+        <option value="Continental">Continental</option>
+        <option value="Shinko">Shinko</option>
+        <option value="Heidenau">Heidenau</option>
+      </select>
+    </div>
+    <div class="filter-card">
+      <label class="filter-label" for="weather">Conditions</label>
+      <select id="weather">
+        <option value="all">All conditions</option>
+        <option value="wet">Wet / Rain focus</option>
+        <option value="dry">Dry / Track only</option>
+        <option value="all-weather">All-weather</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="results-bar">
+    <div class="results-count" id="results-count"><span>0</span> tires found</div>
+  </div>
+
+  <div class="tire-grid" id="tire-grid"></div>
+
+</main>
+
+<footer>BMW Motorrad Tire Selector &nbsp;·&nbsp; Internal Sales Reference &nbsp;·&nbsp; Stock tires only</footer>
+
+<script>
+const TIRES = [
+  { brand:"Michelin", name:"Road 6 GT", spectrum:[4,5], bikes:["gs_big","r_series","rt","s_series","f_street"], weather:"all-weather", desc:"Premium sport-touring tire. Excellent wet grip and long mileage. GT version handles heavier BMW boxers and inline-fours." },
+  { brand:"Michelin", name:"Power 6", spectrum:[5,6], bikes:["s_series","f_street","r_series"], weather:"all-weather", desc:"Sport-touring with advanced wet traction and sporty feel. Great on S 1000 R and F 900 R." },
+  { brand:"Michelin", name:"Road 6", spectrum:[4,5], bikes:["r_series","f_street","rt","gs_big"], weather:"all-weather", desc:"All-round touring tire with exceptional wet performance and comfort on long BMW tours." },
+  { brand:"Michelin", name:"Anakee Road", spectrum:[3,4], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Road-biased GS tire. Excellent on tarmac, handles light gravel. Great daily GS tire." },
+  { brand:"Michelin", name:"Anakee Wild", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv","g310gs"], weather:"all-weather", desc:"Aggressive 50/50 GS tire. True off-road capability with enough road usability for transit." },
+  { brand:"Michelin", name:"Anakee Adventure", spectrum:[2,3], bikes:["gs_big","gs_small","gs_adv","g310gs"], weather:"all-weather", desc:"70/30 road/off-road balance. The go-to GS tire for mixed adventure touring." },
+  { brand:"Michelin", name:"Commander 3 Touring", spectrum:[4,5], bikes:["rt","r18"], weather:"all-weather", desc:"Long-distance tourer and cruiser tire. Exceptional mileage and stability for RT and R 18." },
+  { brand:"Michelin", name:"City Grip", spectrum:[4,5], bikes:["ce04","c400"], weather:"wet", desc:"BMW scooter specialist. Superior wet grip for urban commuting on CE 04 and C 400." },
+  { brand:"Michelin", name:"Pilot Road 4 GT", spectrum:[4,5], bikes:["gs_big","r_series","rt","s_series"], weather:"all-weather", desc:"Sport-touring benchmark. Outstanding wet grip with sporty dry handling for heavier BMWs." },
+  { brand:"Dunlop", name:"Trailmax Mission", spectrum:[2,3], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"50/50 GS adventure tire optimized for long-distance trail riding." },
+  { brand:"Dunlop", name:"Trailmax Raid", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Rally-inspired 80/20 off-road GS tire. Desert and enduro focused." },
+  { brand:"Dunlop", name:"Mutant", spectrum:[3,4], bikes:["gs_small","f_street","r_series","g310gs"], weather:"all-weather", desc:"Shape-shifting adventure/street tire. Great on F 900 GS and F 900 R for mixed riding." },
+  { brand:"Dunlop", name:"Q5 Sport Max", spectrum:[5,6], bikes:["s_series","f_street","r_series"], weather:"dry", desc:"Sport tire with strong dry grip. Responsive on S 1000 R and F 900 R." },
+  { brand:"Dunlop", name:"Sport Max Q5A", spectrum:[5,6], bikes:["s_series","f_street","r_series"], weather:"all-weather", desc:"All-weather Q5 variant. Wet performance added for sport riders who ride in all conditions." },
+  { brand:"Dunlop", name:"Road Sport 2", spectrum:[4,5], bikes:["r_series","f_street","s_series"], weather:"all-weather", desc:"Sport-touring balance with excellent wet/dry grip and good mileage for street BMWs." },
+  { brand:"Dunlop", name:"Road Smart 4", spectrum:[4,5], bikes:["rt","r_series","gs_big"], weather:"all-weather", desc:"Self-supporting technology for heavy BMWs like the RT. Great stability and mileage." },
+  { brand:"Dunlop", name:"GPR 300", spectrum:[5,6], bikes:["g310r","g310gs","f_street"], weather:"all-weather", desc:"Sport tire for smaller BMWs. Broad application range on G 310 R and G 310 GS." },
+  { brand:"Dunlop", name:"Moto Z Tractionator Rally GPS", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Rally/GPS enduro tire for serious GS off-road use. Aggressive knobby." },
+  { brand:"Dunlop", name:"Dual Venture Adventure", spectrum:[2,3], bikes:["gs_big","gs_small","gs_adv","g310gs"], weather:"all-weather", desc:"50/50 adventure tire with confident off-road and road performance for GS riders." },
+  { brand:"Metzeler", name:"Karoo 4", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Legendary GS off-road tire. Best-in-class traction on dirt and rock for big adventure BMWs." },
+  { brand:"Metzeler", name:"Roadtec 01 Interact Z8", spectrum:[4,5], bikes:["r_series","rt","gs_big","f_street"], weather:"all-weather", desc:"Interact compound — harder center for mileage, softer shoulders for grip. Excellent on RT and R series." },
+  { brand:"Metzeler", name:"ME888", spectrum:[4,5], bikes:["rt","r18"], weather:"all-weather", desc:"Cruiser and tourer specialist for R 18 and RT. Exceptional mileage with reliable wet grip." },
+  { brand:"Mitas", name:"Enduro Trail Dakar", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Dakar-inspired extreme enduro tire for GS off-road adventures. Hard terrain specialist." },
+  { brand:"Mitas", name:"Enduro Trail Dakar +", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"Enhanced Dakar compound for extreme rocky terrain on adventure BMWs." },
+  { brand:"Mitas", name:"Touring Force", spectrum:[3,4], bikes:["gs_big","gs_adv","rt"], weather:"all-weather", desc:"Touring-focused all-season tire for adventure and touring BMW riders." },
+  { brand:"Pirelli", name:"Diablo Rosso 4", spectrum:[5,6], bikes:["s_series","r_series","f_street"], weather:"all-weather", desc:"Sport-hypersport tire with excellent wet performance and track-capable dry grip." },
+  { brand:"Pirelli", name:"Diablo Super Corsa V4", spectrum:[6,7], bikes:["s_series"], weather:"dry", desc:"Race replica tire for S 1000 RR. Maximum dry grip for track days and circuit use." },
+  { brand:"Pirelli", name:"Diablo Rosso 4 Corsa", spectrum:[6,7], bikes:["s_series","r_series"], weather:"dry", desc:"Track-focused hypersport. Circuit ready, best on S 1000 RR and S 1000 R." },
+  { brand:"Pirelli", name:"Diablo Super Corsa V3", spectrum:[6,7], bikes:["s_series"], weather:"dry", desc:"Previous-gen race replica. Still a benchmark for S 1000 RR track performance." },
+  { brand:"Continental", name:"TKC 80", spectrum:[1,2], bikes:["gs_big","gs_small","gs_adv","g310gs"], weather:"all-weather", desc:"Classic GS knobbly. 80% off-road capability with iconic tread pattern." },
+  { brand:"Continental", name:"ContiTrail Attack 3", spectrum:[2,3], bikes:["gs_big","gs_small","gs_adv"], weather:"all-weather", desc:"50/50 GS adventure tire with sporty road handling and solid off-road grip." },
+  { brand:"Shinko", name:"Trail Master", spectrum:[2,3], bikes:["gs_small","g310gs","gs_adv"], weather:"all-weather", desc:"Value-priced adventure tire with solid off-road traction and decent road manners." },
+  { brand:"Heidenau", name:"K60 Scout", spectrum:[2,3], bikes:["gs_big","gs_small","gs_adv","g310gs"], weather:"all-weather", desc:"German-made adventure tire with outstanding durability and mixed-terrain grip." },
+];
+
+const SPECTRUM_NAMES = ["","Full off-road","Off-road / Adventure","Adventure","Adventure / Street","Street / Touring","Sport / Street","Track / Race"];
+
+const SPECTRUM_COLORS = ["","#9E5C00","#7A7A00","#2E8B2E","#1C7A8C","#1C69D4","#5C2E8C","#8C1C3A"];
+
+const MODEL_LABELS = {
+  gs_big:"R 1300/1250/1200 GS",
+  gs_small:"F 900/850/750 GS",
+  gs_adv:"GS Adventure",
+  g310gs:"G 310 GS",
+  r_series:"R 1250 R / RS",
+  s_series:"S 1000 R/RR/XR",
+  f_street:"F 900 R / XR",
+  g310r:"G 310 R",
+  rt:"RT / K 1600",
+  r18:"R 18",
+  ce04:"CE 04",
+  c400:"C 400 X/GT"
+};
+
+function render() {
+  const sv = parseInt(document.getElementById('spectrum').value);
+  const bt = document.getElementById('bikeType').value;
+  const br = document.getElementById('brand').value;
+  const wt = document.getElementById('weather').value;
+
+  document.getElementById('spectrum-label').textContent = SPECTRUM_NAMES[sv];
+  document.getElementById('spectrum-label').style.color = SPECTRUM_COLORS[sv];
+
+  let filtered = TIRES.filter(t => {
+    const inSpectrum = sv >= t.spectrum[0] && sv <= t.spectrum[1];
+    const inBike = bt === 'all' || t.bikes.includes(bt);
+    const inBrand = br === 'all' || t.brand === br;
+    const inWeather = wt === 'all' || t.weather === wt || (wt === 'wet' && t.weather === 'all-weather') || (wt === 'all-weather' && t.weather === 'all-weather');
+    return inSpectrum && inBike && inBrand && inWeather;
+  });
+
+  const countEl = document.getElementById('results-count');
+  countEl.innerHTML = '<span>' + filtered.length + '</span> tire' + (filtered.length !== 1 ? 's' : '') + ' found';
+
+  const grid = document.getElementById('tire-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">No tires match these filters — try adjusting the spectrum or filters above.</div>';
+    return;
+  }
+
+  const leftPct = ((t.spectrum[0] - 1) / 6 * 100);
+  const widthPct = ((t.spectrum[1] - t.spectrum[0]) / 6 * 100 + (1/6*100));
+
+  grid.innerHTML = filtered.map(t => {
+    const lp = ((t.spectrum[0] - 1) / 6 * 100).toFixed(1);
+    const wp = ((t.spectrum[1] - t.spectrum[0] + 1) / 6 * 100).toFixed(1);
+    const midSpectrum = Math.round((t.spectrum[0] + t.spectrum[1]) / 2);
+    const barColor = SPECTRUM_COLORS[midSpectrum];
+
+    const weatherBadge = t.weather === 'wet'
+      ? '<span class="badge badge-wet">Wet focus</span>'
+      : t.weather === 'dry'
+      ? '<span class="badge badge-dry">Dry / Track</span>'
+      : '<span class="badge badge-allweather">All-weather</span>';
+
+    const modelBadges = t.bikes.map(b => `<span class="badge badge-model">${MODEL_LABELS[b]||b}</span>`).join('');
+
+    return `<div class="tire-card">
+      <div class="tire-brand">${t.brand}</div>
+      <div class="tire-name">${t.name}</div>
+      <div class="tire-spectrum-bar">
+        <div class="tire-spectrum-fill" style="left:${lp}%;width:${wp}%;background:${barColor};"></div>
+      </div>
+      <div class="tire-badges">${weatherBadge}</div>
+      <div class="tire-badges">${modelBadges}</div>
+      <div class="tire-desc">${t.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('spectrum').addEventListener('input', render);
+document.getElementById('bikeType').addEventListener('change', render);
+document.getElementById('brand').addEventListener('change', render);
+document.getElementById('weather').addEventListener('change', render);
+render();
+</script>
+</body>
+</html>
